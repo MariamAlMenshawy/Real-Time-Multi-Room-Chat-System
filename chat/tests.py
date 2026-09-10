@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from globals.test_objects import create_chat, create_user
-from chat.models import ChatRoom 
+from chat.models import ChatRoom
+from django.contrib.auth.models import User 
 
 # Create your tests here.
 
@@ -57,3 +58,42 @@ class TestRoomDetails(APITestCase):
         res = self.client.get(self.endpoint)     # ✓ Cache HIT
         print(res.data)
         self.assertEqual(res.status_code, 200)
+
+
+class TestRegister(APITestCase):
+    def setUp(self):
+        self.user = create_user()
+        self.endpoint = '/api/register/'
+
+    def test_register_user(self):
+        data = {
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "12345678"
+        }
+        res = self.client.post(self.endpoint,data,format="json")
+        self.assertEqual(res.status_code, 201)
+        self.assertTrue(User.objects.filter(username="testuser").exists())
+
+    def test_register_invalid_data(self):
+        data = {
+            "username": "testuser",
+            "email": "test@example.com",
+        }
+        res = self.client.post(self.endpoint,data,format="json")
+        self.assertEqual(res.status_code, 400)
+
+class TestProfile(APITestCase):
+    def setUp(self):
+        self.user = create_user()
+        self.endpoint = '/api/profile/'
+
+    def test_profile_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.get(self.endpoint)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["username"], "test")
+          
+    def test_profile_unauthenticated(self):
+        res = self.client.get(self.endpoint)
+        self.assertEqual(res.status_code,401)

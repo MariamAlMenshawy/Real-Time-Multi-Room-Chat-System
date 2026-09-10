@@ -5,6 +5,7 @@ urlpatterns = [
     path('rooms/',views.RoomList.as_view()),
     path('rooms/<slug>/',views.Room_slug.as_view()),
     path('new_room/',views.PostRoom.as_view()),
+    path('register/',views.Register.as_view()),
+    path('profile/',views.Profile.as_view()),
     
-
 ]
