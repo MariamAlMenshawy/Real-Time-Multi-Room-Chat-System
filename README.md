@@ -47,6 +47,12 @@ POST  /api/token/
 POST  /api/token/refresh/
 ```
 
+### User
+```text
+POST  /api/register/
+GET   /api/profile/
+```
+
 ### Chat Rooms
 ```text
 GET   /api/rooms/
